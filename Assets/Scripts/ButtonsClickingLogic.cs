@@ -1,22 +1,51 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class ButtonsClickingLogic : MonoBehaviour
 {
     // Having a separate variable for each let the button be pressed only during the FIRST frame and not during as many frames as you hold the button for
     // If you had only one variable for each it wouldn't work correctly
-    private bool alreadyClickedUp = false;
-    private bool alreadyClickedDown = false;
-    private bool alreadyClickedLeft = false;
-    private bool alreadyClickedRight = false;
-    private int i = 0;
-    private string userPress = "";
+    private bool alreadyClickedUp;  // Default value - false
+    private bool alreadyClickedDown;
+    private bool alreadyClickedLeft;
+    private bool alreadyClickedRight;
+    
+    private int i;  // Default value - 0
+    private bool isWaiting;
 
     [SerializeField] private GameObject buttonsHolder;
-    [SerializeField] private List<GameObject> defaultPrefabs;  // Blue buttons prefabs (top, down, left, right)
-    [SerializeField] private List<GameObject> correctPrefabs;  // Green buttons prefabs (top, down, left, right)
-    [SerializeField] private List<GameObject> wrongPrefabs;  // Red buttons prefabs (top, down, left, right) 
-    
+
+    private Dictionary<char, Sprite> defaultSprites;
+    private Dictionary<char, Sprite> correctSprites;
+    private Dictionary<char, Sprite> wrongSprites;
+
+    void Start()
+    {
+        // Populating all the dictionaries with the correct sprites from Resources folder
+        defaultSprites = new Dictionary<char, Sprite>()
+        {
+            {'u', Resources.Load<Sprite>("Sprites/up_default")},
+            {'d', Resources.Load<Sprite>("Sprites/down_default")},
+            {'l', Resources.Load<Sprite>("Sprites/left_default")},
+            {'r', Resources.Load<Sprite>("Sprites/right_default")}
+        };
+        correctSprites = new Dictionary<char, Sprite>()
+        {
+            {'u', Resources.Load<Sprite>("Sprites/up_correct")},
+            {'d', Resources.Load<Sprite>("Sprites/down_correct")},
+            {'l', Resources.Load<Sprite>("Sprites/left_correct")},
+            {'r', Resources.Load<Sprite>("Sprites/right_correct")}
+        };
+        wrongSprites = new Dictionary<char, Sprite>()
+        {
+            { 'u', Resources.Load<Sprite>("Sprites/up_wrong") },
+            { 'd', Resources.Load<Sprite>("Sprites/down_wrong") },
+            { 'l', Resources.Load<Sprite>("Sprites/left_wrong") },
+            { 'r', Resources.Load<Sprite>("Sprites/right_wrong") }
+        };
+    }
+
     void Update()
     {
         float upAxis = Input.GetAxis("Up");
@@ -24,165 +53,98 @@ public class ButtonsClickingLogic : MonoBehaviour
         float leftAxis = Input.GetAxis("Left");
         float rightAxis = Input.GetAxis("Right");
 
-        GameObject button = buttonsHolder.transform.GetChild(i).gameObject;  // i - current child button number we need to press
-        Debug.Log("Next direction: " + button.name);
+        GameObject
+            button = buttonsHolder.transform.GetChild(i).gameObject; // i - current child button number we need to press
 
-        if (upAxis > 0)
-        {
-            if (!alreadyClickedUp)
-            {
-                alreadyClickedUp = true;
-                userPress = "up";
-                if (button.CompareTag(userPress))
-                {
-                    Debug.Log("Correct");
+        SpriteRenderer
+            buttonSpriteRenderer = button.GetComponent<SpriteRenderer>(); // Get Sprite RENDERER - this is the COMPONENT
+        Sprite buttonSprite = buttonSpriteRenderer.sprite; // Get the SPRITE itself
+        char spriteName = buttonSprite.name[0]; // Gets the NAME of the sprite
 
-                    // SetSiblingIndex is used to place the NEW PREFAB in the correct place - since I have prefabs and not just sprites of diff color, I have to do it this way 
-                    GameObject newCorrectButton = Instantiate(correctPrefabs[0], buttonsHolder.transform);
-                    newCorrectButton.transform.SetSiblingIndex(i);
-                    
-                    Destroy(button);
-                    if (i <= buttonsHolder.transform.childCount)
-                    {
-                        i++;
-                    }
-                }
-                else
-                {
-                    Debug.Log("Incorrect --------------------------------");
-                    Debug.Log("i: " + i);  // The number of the current button we WERE standing on and pressed wrong
-                    for (int j = 0; j < i; j++)
-                    {
-                        Debug.Log("j: " + j);  // Starting from button 0 I take each one up until the button I'm standing on
-                        GameObject prevButton = buttonsHolder.transform.GetChild(j).gameObject;  // Get this jth button
-                        
-                        int defPrefabIndex = 0;
-                        Debug.Log("Prev button name: " + prevButton.name);
-                        if (prevButton.name == "up_correct" ||  prevButton.name == "up_correct(Clone)")
-                        {
-                            defPrefabIndex = 0;
-                        } else if (prevButton.name == "down_correct" || prevButton.name == "down_correct(Clone)")
-                        {
-                            defPrefabIndex = 1;
-                        } else if (prevButton.name == "left_correct" || prevButton.name == "left_correct(Clone)")
-                        {
-                            defPrefabIndex = 2;
-                        } else if (prevButton.name == "right_correct" || prevButton.name == "right_correct(Clone)")
-                        {
-                            defPrefabIndex = 3;
-                        }
-                    
-                        Destroy(prevButton);
-                        GameObject newDefButton = Instantiate(defaultPrefabs[defPrefabIndex], buttonsHolder.transform);
-                        Debug.Log("BUTTON TO CREATE RN: " + newDefButton + " at " + j);
-                        newDefButton.transform.SetSiblingIndex(j);
-                    }
-                    i = 0;
-                }
-            }
-        }
-        else
+        if (!isWaiting)  // In case the coroutine for resetting the buttons is running
         {
-            alreadyClickedUp = false;
-        }
-        
-        if (downAxis > 0)
-        {
-            if (!alreadyClickedDown)
+            if (upAxis > 0)
             {
-                alreadyClickedDown = true;
-                userPress = "down";
-                Debug.Log("Pressed Down");
-                if (button.CompareTag(userPress))
-                {
-                    Debug.Log("Correct");
-                    
-                    int siblingIndex = button.transform.GetSiblingIndex();
-                    GameObject newCorrectButton = Instantiate(correctPrefabs[1], buttonsHolder.transform);
-                    newCorrectButton.transform.SetSiblingIndex(siblingIndex);
-                    
-                    Destroy(button);
-                    
-                    if (i < buttonsHolder.transform.childCount)
-                    {
-                        i++;
-                    } else
-                    {
-                        Debug.Log("Incorrect");
-                        i = 0;
-                    }
-                }
+                CheckPressedDirection(upAxis, ref alreadyClickedUp, spriteName, buttonSpriteRenderer, 'u');
             }
-        }
-        else
-        {
-            alreadyClickedDown = false;
-        }
-        
-        if (leftAxis > 0)
-        {
-            if (!alreadyClickedLeft)
+            else
             {
-                alreadyClickedLeft = true;
-                userPress = "left";
-                Debug.Log("Pressed Left");
-                if (button.CompareTag(userPress))
-                {
-                    Debug.Log("Correct");
-                    
-                    int siblingIndex = button.transform.GetSiblingIndex();
-                    GameObject newCorrectButton = Instantiate(correctPrefabs[2], buttonsHolder.transform);
-                    newCorrectButton.transform.SetSiblingIndex(siblingIndex);
-                    
-                    Destroy(button);
-                    
-                    if (i < buttonsHolder.transform.childCount)
-                    {
-                        i++;
-                    } else
-                    {
-                        Debug.Log("Incorrect");
-                        i = 0;
-                    }
-                }
+                alreadyClickedUp = false;  // Resets the Up axis flag - meaning we can register a new press
             }
-        }
-        else
-        {
-            alreadyClickedLeft = false;
-        }
-        
-        if (rightAxis > 0)
-        {
-            if (!alreadyClickedRight)
+
+            if (downAxis > 0)
             {
-                alreadyClickedRight = true;
-                userPress = "right";
-                Debug.Log("Pressed Right");
-                if (button.CompareTag(userPress))
-                {
-                    Debug.Log("Correct");
-                    
-                    int siblingIndex = button.transform.GetSiblingIndex();
-                    GameObject newCorrectButton = Instantiate(correctPrefabs[3], buttonsHolder.transform);
-                    newCorrectButton.transform.SetSiblingIndex(siblingIndex);
-                    
-                    Destroy(button);
-                    
-                    if (i < buttonsHolder.transform.childCount)
-                    {
-                        i++;
-                    } else
-                    {
-                        Debug.Log("Incorrect");
-                        i = 0;
-                    }
-                }
+                CheckPressedDirection(downAxis, ref alreadyClickedDown, spriteName, buttonSpriteRenderer, 'd');
+            }
+            else
+            {
+                alreadyClickedDown = false;
+            }
+
+            if (leftAxis > 0)
+            {
+                CheckPressedDirection(leftAxis, ref alreadyClickedLeft, spriteName, buttonSpriteRenderer, 'l');
+            }
+            else
+            {
+                alreadyClickedLeft = false;
+            }
+
+            if (rightAxis > 0)
+            {
+                CheckPressedDirection(rightAxis, ref alreadyClickedRight, spriteName, buttonSpriteRenderer, 'r');
+            }
+            else
+            {
+                alreadyClickedRight = false;
             }
         }
-        else
+    }
+    
+    void CheckPressedDirection(float axisPressed, ref bool alreadyClickedDirection, char spriteName, SpriteRenderer buttonSpriteRenderer, char userPress)
+    {
+        if (!alreadyClickedDirection)
         {
-            alreadyClickedRight = false;
+            Debug.Log(userPress);
+            alreadyClickedDirection = true;
+            Sprite correctSprite = correctSprites[userPress];  // correctSprites and wrongSprites are HASH MAPS so it's easy to get the correct sprite since we know the KEY for both 
+            Sprite wrongSprite = wrongSprites[spriteName];
+            if (spriteName == userPress)
+            {
+                Debug.Log("Correct " + i);
+                if (i <= buttonsHolder.transform.childCount)
+                {
+                    buttonSpriteRenderer.sprite = correctSprite;
+                    i++;
+                }
+            }
+            else
+            {
+                Debug.Log("Incorrect " + i);
+                StartCoroutine(WrongButtonWaitTime(buttonSpriteRenderer, wrongSprite, defaultSprites[spriteName]));
+            }
         }
+    }
+
+    IEnumerator WrongButtonWaitTime(SpriteRenderer buttonSpriteRenderer, Sprite wrongSprite, Sprite defaultSprite)
+    {
+        isWaiting = true;  // Stop receiving button presses from the user while we reset the buttons
+        
+        buttonSpriteRenderer.sprite = wrongSprite;
+        yield return new WaitForSeconds(2f);
+        buttonSpriteRenderer.sprite = defaultSprite;
+        
+        // Now start from the first button, go over all of them and change to default colour
+        for (int j = 0; j < i; j++)
+        {
+            GameObject prevButton = buttonsHolder.transform.GetChild(j).gameObject;
+            SpriteRenderer prevButtonSpriteRenderer = prevButton.GetComponent<SpriteRenderer>();  // Get Sprite RENDERER - this is the COMPONENT
+            Sprite prevButtonSprite = prevButtonSpriteRenderer.sprite;  // Get the SPRITE itself
+            char prevSpriteName = prevButtonSprite.name[0];  // Gets the NAME of the sprite
+            prevButtonSpriteRenderer.sprite = defaultSprites[prevSpriteName];
+        }
+        i = 0;  // Coming back to the very first button in the sequence
+        
+        isWaiting = false;  // Now we unlock the input receiving
     }
 }

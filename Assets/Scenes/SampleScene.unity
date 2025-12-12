@@ -274,6 +274,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2077159925}
     m_Modifications:
+    - target: {fileID: 1524901012144918387, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3078797917324003896, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
       propertyPath: m_Name
       value: buttonPrefab (4)
@@ -380,6 +384,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: dee87fe99cf8b5942a28821cbf995229, type: 3}
+    - target: {fileID: 1524901012144918387, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3078797917324003896, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
       propertyPath: m_Name
       value: buttonPrefab (3)
@@ -557,6 +565,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 0ffed12c8d0c63046972c7f9009d3b49, type: 3}
+    - target: {fileID: 1524901012144918387, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3078797917324003896, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
       propertyPath: m_Name
       value: buttonPrefab (1)
@@ -660,6 +672,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonsHolder: {fileID: 2077159924}
+  buttonPrefab: {fileID: 3078797917324003896, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
 --- !u!4 &1850435967
 Transform:
   m_ObjectHideFlags: 0
@@ -687,6 +700,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: a7beaddacba57414fb55a8e34f317ae9, type: 3}
+    - target: {fileID: 1524901012144918387, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3078797917324003896, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
       propertyPath: m_Name
       value: buttonPrefab (2)
@@ -840,6 +857,14 @@ PrefabInstance:
       value: buttonPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 5290895444872440797, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290895444872440797, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290895444872440797, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
@@ -854,6 +879,14 @@ PrefabInstance:
     - target: {fileID: 5290895444872440797, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290895444872440797, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290895444872440797, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0.96
       objectReference: {fileID: 0}
     - target: {fileID: 5290895444872440797, guid: 5003f3d06ef754a448969673a2f70e1c, type: 3}
       propertyPath: m_LocalPosition.x

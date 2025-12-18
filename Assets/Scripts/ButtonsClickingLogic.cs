@@ -26,6 +26,9 @@ public class ButtonsClickingLogic : MonoBehaviour
     
     char[] directions = { 'u', 'd', 'l', 'r' };  // For selecting a random direction when instantiating new sprites for the new level
 
+    private TimerBar timerBarScript;
+    private bool timerOut;
+
     void Start()
     {
         // Populating all the dictionaries with the correct sprites from Resources folder
@@ -52,6 +55,9 @@ public class ButtonsClickingLogic : MonoBehaviour
         }; 
         
         totalNumOfButtons = buttonsHolder.transform.childCount;  // The very first round count - buttons are manually presetted, 5 of them
+        
+        timerBarScript = GameObject.FindGameObjectWithTag("TimerBar").GetComponent<TimerBar>();
+        timerOut = timerBarScript.getTimerOut;
     }
 
     void Update()
@@ -60,7 +66,26 @@ public class ButtonsClickingLogic : MonoBehaviour
         float downAxis = Input.GetAxis("Down");
         float leftAxis = Input.GetAxis("Left");
         float rightAxis = Input.GetAxis("Right");
+        
+        timerOut = timerBarScript.getTimerOut;
 
+        if (!timerOut)  // If the timer has NOT FINISHED yet,
+        {
+            LevelLogic_and_Functions(upAxis, downAxis, leftAxis, rightAxis);  // Keep playing - checking buttons, creating new levels etc
+        }
+        else
+        {
+            Debug.Log("TIMER FINISHED - STOP THE GAME");  // Acc stops the game automatically bc we don't land into the "if" part anymore so we can't press any buttons 
+            
+            // -----------------------------------------------------------------
+            // Add some message of loosing here - maybe the menu screen, reset to the start level
+            // -----------------------------------------------------------------
+        }
+
+    }
+
+    void LevelLogic_and_Functions(float upAxis, float  downAxis, float leftAxis, float rightAxis)
+    {
         if (!waitingForLevelReset)
         {
             GameObject
@@ -131,7 +156,6 @@ public class ButtonsClickingLogic : MonoBehaviour
             Sprite wrongSprite = wrongSprites[spriteName];
             if (spriteName == userPress)
             {
-                // Debug.Log("Correct " + i);
                 if (i <= buttonsHolder.transform.childCount)
                 {
                     buttonSpriteRenderer.sprite = correctSprite;
@@ -141,7 +165,6 @@ public class ButtonsClickingLogic : MonoBehaviour
             }
             else
             {
-                // Debug.Log("Incorrect " + i);
                 WrongButtonAnimation(buttonRectTransform);
                 StartCoroutine(WrongButtonWaitTime(buttonSpriteRenderer, wrongSprite, defaultSprites[spriteName]));
             }
@@ -153,7 +176,7 @@ public class ButtonsClickingLogic : MonoBehaviour
         isWaiting = true;  // Stop receiving button presses from the user while we reset the buttons
         
         buttonSpriteRenderer.sprite = wrongSprite;
-        yield return new WaitForSeconds(1.3f);
+        yield return new WaitForSeconds(0.7f);
         buttonSpriteRenderer.sprite = defaultSprite;
         
         // Now start from the first button, go over all of them and change to default colour
@@ -174,12 +197,10 @@ public class ButtonsClickingLogic : MonoBehaviour
     {
         waitingForLevelReset = true;
         
-        // Debug.Log("ALL SEQUENCE CORRECT-------------");
         for (int j = buttonsHolder.transform.childCount - 1; j >= 0; j--)
         {
             Destroy(buttonsHolder.transform.GetChild(j).gameObject);
         }
-        // Debug.Log("----------------------- ALL BUTTONS DESTROYED");
 
         yield return null;  // WAIT FOR ONE FRAME so that the Destroy() actually works - THEN COUNT THE CHILDREN AND INSTANTIATE NEW ONES
         
@@ -187,7 +208,7 @@ public class ButtonsClickingLogic : MonoBehaviour
         i = 0;
         
         // Select a random number of buttons in a level's range - LATER, for now the amount is fixed
-        int nextNumOfButtons = 7;
+        int nextNumOfButtons = 5;
 
         // Go through each, instantiate and pick a random default sprite
         for (int j = 0; j < nextNumOfButtons; j++)
@@ -199,9 +220,10 @@ public class ButtonsClickingLogic : MonoBehaviour
 
         // Record the new total number of buttons, since we won't enter this piece of code again until we get i equal to this new total number of buttons
         totalNumOfButtons = buttonsHolder.transform.childCount; 
-        // Debug.Log("NEW CHILDREN AMOUNT: " + totalNumOfButtons);
 
         waitingForLevelReset = false;
+        
+        timerBarScript.ResetTimerBar();
     }
 
     void CorrectButtonAnimation(Transform buttonTransform)

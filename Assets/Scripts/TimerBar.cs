@@ -9,8 +9,7 @@ public class TimerBar : MonoBehaviour
     [SerializeField] private GameObject maskObject;
     [SerializeField] private float maskFill;
     private Image mask;
-    private float barTimerDuration = 7f;  // This DOES NOT relate to Timer.cs - I'm not using a timer here since I can just 
-    // tell how many seconds I need for the bar to run out and do 1f/7 e.g. - in 7 seconds
+    private float barTimerDuration;
 
     private bool timerOut;
 
@@ -49,5 +48,10 @@ public class TimerBar : MonoBehaviour
     public void ResetTimerBar()
     {
         maskFill = 1f;
+    }
+
+    public void SetTimerDuration(int timerDuration)
+    {
+        barTimerDuration = timerDuration;
     }
 }

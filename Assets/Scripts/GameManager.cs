@@ -17,16 +17,22 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        buttonsClickingLogic.SetupLevel(allLevels[0]);
+        buttonsClickingLogic.LevelSetup(allLevels[0]);
     }
 
-    public void ProgressToNextLevel()
+    public void ProgressToNextLevel()  // Use this ONLY when you've finished all sequences from the previous level
+    // This way I will give ButtonsClickingLogic.cs the NEXT level data
     {
         currentLevelIndex++;
         if (currentLevelIndex < allLevels.Count)
         {
             // .SetupLevel() - method from the ButtonsClickingLogic.cs to start the level WITH THE INFO we PASS IN from LEVEL DATA
-            buttonsClickingLogic.SetupLevel(allLevels[currentLevelIndex]);
+            buttonsClickingLogic.LevelSetup(allLevels[currentLevelIndex]);
+        }
+        else
+        {
+            buttonsClickingLogic.gameFinished = true; 
+            Debug.Log("YOU WIN THE WHOLE GAME!");
         }
     }
 }

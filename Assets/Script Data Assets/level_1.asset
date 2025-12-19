@@ -19,5 +19,5 @@ MonoBehaviour:
   - Overriding Access Controls...
   - Disabling Motion Sensors...
   numberOfButtons: 5
-  timerDuration: 7
+  timerDuration: 10
   animationSpeed: 0.05

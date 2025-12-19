@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     private int currentLevelIndex;
     
     private ButtonsClickingLogic buttonsClickingLogic;
+    
+    private TimerBar timerBarScript;
+    
     void Awake()
     {
         buttonsClickingLogic = GetComponent<ButtonsClickingLogic>();
@@ -18,6 +21,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         buttonsClickingLogic.LevelSetup(allLevels[0]);
+        timerBarScript = GameObject.FindGameObjectWithTag("TimerBar").GetComponent<TimerBar>();
     }
 
     public void ProgressToNextLevel()  // Use this ONLY when you've finished all sequences from the previous level
@@ -32,6 +36,7 @@ public class GameManager : MonoBehaviour
         else
         {
             buttonsClickingLogic.gameFinished = true; 
+            if (timerBarScript.GetTimerRunning) timerBarScript.ToggleTimerState();  // Stop the timer if it IS RUNNING STILL
             Debug.Log("YOU WIN THE WHOLE GAME!");
         }
     }

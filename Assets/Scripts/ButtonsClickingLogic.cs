@@ -30,11 +30,15 @@ public class ButtonsClickingLogic : MonoBehaviour
     private TimerBar timerBarScript;
     private bool timerOut;
     
+    private UILevel_Info uiLevelInfoScript;
+    
     // Variables I get from LEVEL DATA - LevelSetup()
     private LevelData currentLevelData;  // Recording the object itself
     private int numberOfButtons;  // This will get assigned in the method
     private int numberOfRounds;
     private float animationSpeed;
+    private string levelName;
+    private string[] roundsNames;
 
     private int roundsPassed;  // This I change MANUALLY keeping track of how many rounds we completed
     // once it's == numberOfRounds, we call the ProgressToNextLevel() from Game Manager
@@ -66,6 +70,8 @@ public class ButtonsClickingLogic : MonoBehaviour
         
         timerBarScript = GameObject.FindGameObjectWithTag("TimerBar").GetComponent<TimerBar>();
         timerOut = timerBarScript.getTimerOut;
+        
+        uiLevelInfoScript = GetComponent<UILevel_Info>();  // Not needed to specify the tag bc ButtonsClickingLogic.cs and UILevel_Info.cs are on the same game object as components
     }
     
     public void LevelSetup(LevelData levelData)  // Accepts LEVEL DATA type from the GAME MANAGER - this is where all the details about the current level are stored
@@ -74,12 +80,17 @@ public class ButtonsClickingLogic : MonoBehaviour
         this.numberOfButtons = currentLevelData.numberOfButtons;
         this.numberOfRounds = currentLevelData.numberOfRounds;
         this.animationSpeed = currentLevelData.animationSpeed;
+        this.levelName = currentLevelData.levelName;
+        this.roundsNames = currentLevelData.roundsNames;
 
         roundsPassed = 0;
 
         timerBarScript.SetTimerDuration(currentLevelData.timerDuration);  // Passing the time for THIS LEVEL to the timer script
+        if (!timerBarScript.GetTimerRunning) timerBarScript.ToggleTimerState();  // Start the timer if it's NOT running
         
-        // Debug.Log(buttonsHolder.transform.childCount);
+        uiLevelInfoScript.setLevelName(levelName);
+        uiLevelInfoScript.setRoundName(roundsNames[roundsPassed]);
+        uiLevelInfoScript.setRoundNumber((roundsPassed + 1).ToString());
 
         StartCoroutine(ResetButtons());  // CREATES THE NEEDED BUTTONS - from this moment the ButtonsClickingLogic.cs starts WORKING
     }
@@ -101,6 +112,7 @@ public class ButtonsClickingLogic : MonoBehaviour
             }
             else
             {
+                timerBarScript.ToggleTimerState();
                 Debug.Log(
                     "TIMER FINISHED - LOST THE GAME"); // Acc stops the game automatically bc we don't land into the "if" part anymore so we can't press any buttons 
 
@@ -177,6 +189,8 @@ public class ButtonsClickingLogic : MonoBehaviour
                 else 
                 {
                     // Still have rounds left in this level? Reset for the next sequence
+                    uiLevelInfoScript.setRoundName(roundsNames[roundsPassed]);
+                    uiLevelInfoScript.setRoundNumber((roundsPassed + 1).ToString());
                     StartCoroutine(ResetButtons());
                 }
             }
@@ -232,7 +246,9 @@ public class ButtonsClickingLogic : MonoBehaviour
     IEnumerator ResetButtons() 
     {
         waitingForLevelReset = true;  // A flag to NOT be able to click any buttons while resetting the level
-
+        
+        uiLevelInfoScript.setRoundName(roundsNames[roundsPassed]);
+        
         while (buttonsHolder.transform.childCount > 0)
         {
             Transform child = buttonsHolder.transform.GetChild(0);

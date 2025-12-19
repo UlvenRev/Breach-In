@@ -12,6 +12,7 @@ public class TimerBar : MonoBehaviour
     private float barTimerDuration;
 
     private bool timerOut;
+    private bool timerRunning;
 
     void Start()
     {
@@ -22,15 +23,18 @@ public class TimerBar : MonoBehaviour
     
     void Update()
     {
-        if (maskFill > 0)
+        if (timerRunning)
         {
-            maskFill -= (1f / barTimerDuration) * Time.deltaTime;
-            if (maskFill < 0) maskFill = 0;
-            mask.fillAmount = maskFill;  // Assign the new amount to the fill property of the mask object   
-        }
-        else
-        {
-            OnBarTimerFinished();
+            if (maskFill > 0)
+            {
+                maskFill -= (1f / barTimerDuration) * Time.deltaTime;
+                if (maskFill < 0) maskFill = 0;
+                mask.fillAmount = maskFill;  // Assign the new amount to the fill property of the mask object   
+            }
+            else
+            {
+                OnBarTimerFinished();
+            }   
         }
     }
 
@@ -53,5 +57,15 @@ public class TimerBar : MonoBehaviour
     public void SetTimerDuration(int timerDuration)
     {
         barTimerDuration = timerDuration;
+    }
+
+    public void ToggleTimerState()
+    {
+        timerRunning = !timerRunning;
+    }
+
+    public bool GetTimerRunning
+    {
+        get { return timerRunning; }
     }
 }

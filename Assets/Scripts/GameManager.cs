@@ -30,13 +30,13 @@ public class GameManager : MonoBehaviour
         currentLevelIndex++;
         if (currentLevelIndex < allLevels.Count)
         {
-            // .SetupLevel() - method from the ButtonsClickingLogic.cs to start the level WITH THE INFO we PASS IN from LEVEL DATA
+            // .LevelSetup() - method from the ButtonsClickingLogic.cs to start the level WITH THE INFO we PASS IN from LEVEL DATA
             buttonsClickingLogic.LevelSetup(allLevels[currentLevelIndex]);
         }
         else
         {
             buttonsClickingLogic.gameFinished = true; 
-            if (timerBarScript.GetTimerRunning) timerBarScript.ToggleTimerState();  // Stop the timer if it IS RUNNING STILL
+            if (timerBarScript.GetTimerRunning) timerBarScript.ToggleTimerState();  // Stop the timer if it IS RUNNING
             Debug.Log("YOU WIN THE WHOLE GAME!");
         }
     }

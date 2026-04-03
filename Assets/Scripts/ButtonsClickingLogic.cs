@@ -74,6 +74,7 @@ public class ButtonsClickingLogic : MonoBehaviour
         uiLevelInfoScript = GetComponent<UILevel_Info>();  // Not needed to specify the tag bc ButtonsClickingLogic.cs and UILevel_Info.cs are on the same game object as components
     }
     
+    // This function is called at the GameManager.cs on START 
     public void LevelSetup(LevelData levelData)  // Accepts LEVEL DATA type from the GAME MANAGER - this is where all the details about the current level are stored
     {
         currentLevelData = levelData;
@@ -83,6 +84,8 @@ public class ButtonsClickingLogic : MonoBehaviour
         this.levelName = currentLevelData.levelName;
         this.roundsNames = currentLevelData.roundsNames;
 
+        Debug.Log(numberOfButtons);
+
         roundsPassed = 0;
 
         timerBarScript.SetTimerDuration(currentLevelData.timerDuration);  // Passing the time for THIS LEVEL to the timer script
@@ -91,6 +94,8 @@ public class ButtonsClickingLogic : MonoBehaviour
         uiLevelInfoScript.setLevelName(levelName);
         uiLevelInfoScript.setRoundName(roundsNames[roundsPassed]);
         uiLevelInfoScript.setRoundNumber((roundsPassed + 1).ToString());
+
+        Debug.Log($"Active: {gameObject.activeInHierarchy}, Enabled: {enabled}");
 
         StartCoroutine(ResetButtons());  // CREATES THE NEEDED BUTTONS - from this moment the ButtonsClickingLogic.cs starts WORKING
     }
@@ -184,7 +189,7 @@ public class ButtonsClickingLogic : MonoBehaviour
                 if (roundsPassed >= numberOfRounds)
                 {
                     // DON'T ResetButtons() here! Just tell the manager we are done
-                    FindObjectOfType<GameManager>().ProgressToNextLevel();
+                    FindFirstObjectByType<GameManager>().ProgressToNextLevel();
                 }
                 else 
                 {
@@ -268,6 +273,8 @@ public class ButtonsClickingLogic : MonoBehaviour
             GameObject newButton = Instantiate(buttonPrefab, buttonsHolder.transform);  // buttonsHolder.transform tells Unity it's the PARENT object and newButton is supposed to be inside it
             char randomDefaultDirectionSprite = directions[UnityEngine.Random.Range(0, 4)];
             newButton.GetComponent<SpriteRenderer>().sprite = defaultSprites[randomDefaultDirectionSprite];
+            Debug.Log("created a button");
+            Debug.Log(buttonsHolder.transform.childCount);
         }
     
         waitingForLevelReset = false;

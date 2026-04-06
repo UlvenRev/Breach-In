@@ -43,6 +43,12 @@ public class ButtonsClickingLogic : MonoBehaviour
     private int roundsPassed;  // This I change MANUALLY keeping track of how many rounds we completed
     // once it's == numberOfRounds, we call the ProgressToNextLevel() from Game Manager
 
+    // Sounds 
+    [SerializeField] private AudioClip[] correctbuttonSoundClips;
+    [SerializeField] private AudioClip[] wrongButtonSoundClips;
+    [SerializeField] private AudioClip[] finishRoundSoundClips;
+    private float volume = 0.8f;
+
     void Start()
     {
         // Populating all the dictionaries with the correct sprites from Resources folder
@@ -186,6 +192,7 @@ public class ButtonsClickingLogic : MonoBehaviour
             if (i == numberOfButtons)
             {
                 roundsPassed++;
+                SoundFXManager.instance.PlayRandomSoundFXClip(finishRoundSoundClips, buttonTransform, volume);
                 if (roundsPassed >= numberOfRounds)
                 {
                     // DON'T ResetButtons() here! Just tell the manager we are done
@@ -284,6 +291,7 @@ public class ButtonsClickingLogic : MonoBehaviour
     
     void CorrectButtonAnimation(Transform buttonTransform)
     {
+        SoundFXManager.instance.PlayRandomSoundFXClip(correctbuttonSoundClips, buttonTransform, volume);
         buttonTransform.DOScale(Vector3.one * 1.12f, animationSpeed)
             .OnComplete(() =>
             {
@@ -293,6 +301,7 @@ public class ButtonsClickingLogic : MonoBehaviour
     
     void WrongButtonAnimation(RectTransform buttonTransform)
     {
+        SoundFXManager.instance.PlayRandomSoundFXClip(wrongButtonSoundClips, buttonTransform, volume);
         buttonTransform.DOShakeAnchorPos(animationSpeed, new Vector3(0.10f, 0, 0), 10, 0, false, true);
     }
 }

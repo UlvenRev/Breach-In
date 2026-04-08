@@ -90,8 +90,6 @@ public class ButtonsClickingLogic : MonoBehaviour
         this.levelName = currentLevelData.levelName;
         this.roundsNames = currentLevelData.roundsNames;
 
-        Debug.Log(numberOfButtons);
-
         roundsPassed = 0;
 
         timerBarScript.SetTimerDuration(currentLevelData.timerDuration);  // Passing the time for THIS LEVEL to the timer script
@@ -100,8 +98,6 @@ public class ButtonsClickingLogic : MonoBehaviour
         uiLevelInfoScript.setLevelName(levelName);
         uiLevelInfoScript.setRoundName(roundsNames[roundsPassed]);
         uiLevelInfoScript.setRoundNumber((roundsPassed + 1).ToString());
-
-        Debug.Log($"Active: {gameObject.activeInHierarchy}, Enabled: {enabled}");
 
         StartCoroutine(ResetButtons());  // CREATES THE NEEDED BUTTONS - from this moment the ButtonsClickingLogic.cs starts WORKING
     }

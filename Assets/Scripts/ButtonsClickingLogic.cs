@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using DG.Tweening;
+using TMPro;
 
 public class ButtonsClickingLogic : MonoBehaviour
 {
@@ -48,6 +49,9 @@ public class ButtonsClickingLogic : MonoBehaviour
     [SerializeField] private AudioClip[] wrongButtonSoundClips;
     [SerializeField] private AudioClip[] finishRoundSoundClips;
     private float volume = 0.8f;
+    
+    // TMP with passed levels
+    [SerializeField] private TMP_Text passedLevelsText;
 
     void Start()
     {
@@ -187,8 +191,14 @@ public class ButtonsClickingLogic : MonoBehaviour
             
             if (i == numberOfButtons)
             {
+                // Updating the passedText TMP and command line TMP (success message)
+                passedLevelsText.text += roundsNames[roundsPassed] + "\n";
+                FindFirstObjectByType<TextAnimationsManager>().updateCommandLine("success");
+                
                 roundsPassed++;
+                Debug.Log(roundsPassed);
                 SoundFXManager.instance.PlayRandomSoundFXClip(finishRoundSoundClips, buttonTransform, volume);
+                
                 if (roundsPassed >= numberOfRounds)
                 {
                     // DON'T ResetButtons() here! Just tell the manager we are done
@@ -224,6 +234,7 @@ public class ButtonsClickingLogic : MonoBehaviour
             else
             {
                 WrongButtonAnimation(buttonRectTransform);
+                FindFirstObjectByType<TextAnimationsManager>().updateCommandLine("fail");
                 StartCoroutine(WrongButtonWaitTime(buttonSpriteRenderer, wrongSprite, defaultSprites[spriteName]));
             }
         }
@@ -276,8 +287,6 @@ public class ButtonsClickingLogic : MonoBehaviour
             GameObject newButton = Instantiate(buttonPrefab, buttonsHolder.transform);  // buttonsHolder.transform tells Unity it's the PARENT object and newButton is supposed to be inside it
             char randomDefaultDirectionSprite = directions[UnityEngine.Random.Range(0, 4)];
             newButton.GetComponent<SpriteRenderer>().sprite = defaultSprites[randomDefaultDirectionSprite];
-            Debug.Log("created a button");
-            Debug.Log(buttonsHolder.transform.childCount);
         }
     
         waitingForLevelReset = false;
